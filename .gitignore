@@ -1,4 +1,3 @@
-.idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -57,7 +56,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -100,13 +98,11 @@ __pypackages__/
 
 # Celery stuff
 celerybeat-schedule
-celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -139,3 +135,83 @@ dmypy.json
 cython_debug/
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Python
+
+# .gitignore für Projekte mit MariaDB
+
+# Datenverzeichnis (lokale Instanz oder Docker-Volume)
+data/
+mysql-data/
+mariadb-data/
+db-data/
+
+# InnoDB- und Aria-Dateien, falls das Datenverzeichnis im Repo liegt
+ibdata*
+ib_logfile*
+ib_buffer_pool
+ibtmp*
+undo[0-9]*
+aria_log*
+*.ibd
+*.frm
+*.MYD
+*.MYI
+*.MAI
+*.MAD
+*.TRG
+*.TRN
+*.par
+db.opt
+multi-master.info
+mysql_upgrade_info
+
+# Binär-, Relay- und sonstige Logs
+*.log
+*.err
+*-bin.[0-9]*
+*-bin.index
+*-relay-bin.[0-9]*
+*-relay-bin.index
+relay-log.info
+master.info
+
+# Laufzeitdateien
+*.pid
+*.sock
+*.sock.lock
+
+# Dumps und Backups
+*.sql.gz
+*.sql.bz2
+*.sql.xz
+*.sql.zst
+dump*.sql
+backup*.sql
+backups/
+mariabackup/
+xtrabackup_*
+*.xbstream
+
+# Zugangsdaten und lokale Konfiguration
+.env
+.env.*
+!.env.example
+.my.cnf
+my.local.cnf
+*.local.cnf
+secrets/
+
+# TLS-Schlüssel und Zertifikate
+*.pem
+*.key
+*.crt
+
+# Client-Verlauf
+.mysql_history
+.mariadb_history
+
+# Editor und Betriebssystem
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
