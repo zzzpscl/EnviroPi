@@ -215,3 +215,6 @@ secrets/
 *.swp
 .DS_Store
 Thumbs.db
+
+#Configs
+config.ini
