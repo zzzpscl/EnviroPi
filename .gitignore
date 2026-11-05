@@ -218,3 +218,6 @@ Thumbs.db
 
 #Configs
 config.ini
+
+#Tests
+verbindung_test.py
