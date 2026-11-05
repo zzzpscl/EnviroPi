@@ -3,7 +3,7 @@ USE enviroDb;
 
 CREATE TABLE IF NOT EXISTS station (
     id TINYINT PRIMARY KEY,
-    raumname VARCHAR(50) NOT NULL,
+    raumname VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS messung (
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS messung (
     luftdruck DECIMAL(5,1) NULL,
     co2 SMALLINT UNSIGNED NULL,
     gas_raw SMALLINT UNSIGNED NULL,
-    zeitstempel DATETIME NULL,
+    zeitstempel DATETIME NOT NULL,
     UNIQUE (station_id, zeitstempel),
     FOREIGN KEY (station_id) REFERENCES station(id)
 );
