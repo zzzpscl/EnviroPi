@@ -4,3 +4,5 @@
 2)  https://stackoverflow.com/questions/372885/how-do-i-connect-to-a-mysql-database-in-python
 3) Test Data Insert: https://stackoverflow.com/questions/54781283/inserting-data-into-a-table-in-mysql-with-pymysql
 4) JSON Parsing: https://docs.python.org/de/3.15/library/json.html
+5) Recherche zu Validierung in python
+6) Wie nutze ich Schleifen in Python und wie nutze ich isInstance (Prüfung ob es int oder float ist)
