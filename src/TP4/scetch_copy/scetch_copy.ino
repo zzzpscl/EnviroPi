@@ -4,6 +4,7 @@
 #include "Arduino_GFX_Library.h"
 #include "lv_conf.h"
 #include <NetworkClient.h>
+#include <ArduinoJson.h>
 
 #define EXAMPLE_LVGL_TICK_PERIOD_MS 2
 #define LCD_DC     15
@@ -21,13 +22,6 @@
 
 const char* fake_data =
     R"({"timestamp":"2026-10-12T09:15:00","server_time":"2026-10-12T09:15:42","temperature":22.4,"humidity":48.2,"pressure":1013.6,"co2":845,"gas_raw":null})";
-const uint16_t hour = 19;
-const uint16_t minute = 49;
-const char* temperature = "22.4";
-const char* humidity = "48.2";
-const char* pressure = "1013.6";
-const char* co2 = "845";
-
 
 const char* ssid = "KBMRaspberry"; // Replace with your Wi-Fi name
 const char* password = "BonbonbuntesBananeneis4711."; // Replace with your Wi-Fi password
@@ -47,22 +41,21 @@ Arduino_GFX* gfx = new Arduino_ST7789(bus, LCD_RST /* RST */, 0 /* rotation */, 
 
 
 //Your Domain name with URL path or IP address with path
-String serverName = "http://192.168.1.106:1880/update-sensor";
+String serverName = "http://172.16.9.173:5000/api/current";
 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
 unsigned long lastTime = 0;
-// Timer set to 10 minutes (600000)
-//unsigned long timerDelay = 600000;
+// Timer set to 5 minutes (300000)
+//unsigned long timerDelay = 300000;
+// Set timer to 30 seconds (30000)
+unsigned long timerDelay = 30000;
 // Set timer to 5 seconds (5000)
-unsigned long timerDelay = 5000;
-
+//unsigned long timerDelay = 5000;
 
 void setup()
 {
     Serial.begin(115200);
-
-
     // 1. Hardware Initialization
     // It is recommended to group all initialization code directly related to physical hardware together.
     // Initialize the screen display
@@ -111,33 +104,72 @@ void setup()
     connect_WiFi();
 }
 
-//https://randomnerdtutorials.com/esp32-http-get-post-arduino/
 
 void loop()
 {
     lv_timer_handler();
-    create_layout();
 
     if ((millis() - lastTime) > timerDelay)
     {
-        String body = make_call();
         lastTime = millis();
+        // Allocate the JSON document
+
+
+        JsonDocument doc;
+        // Deserialize the JSON document
+        // DeserializationError error = deserializeJson(doc, body.c_str());
+        const char* body = make_call().c_str();
+        DeserializationError error = deserializeJson(doc, body);
+        // Test if parsing succeeds.
+        if (error)
+        {
+            Serial.print(F("deserializeJson() failed: "));
+            Serial.println(error.f_str());
+            Serial.println(body);
+            return;
+        }
+
+        // Fetch values.
+        // Most of the time, you can rely on the implicit casts.
+        // In other case, you can do doc["time"].as<long>();
+        const char* timestamp = doc["timestamp"];
+        float humidity = doc["humidity"];
+        float temperature = doc["temperature"];
+        float pressure = doc["pressure"];
+        float co2 = doc["co2"];
+
+
+        //https://www.geeksforgeeks.org/c/snprintf-c-library/
+        char humidity_buf[32];
+        snprintf(humidity_buf, sizeof(humidity_buf), "%.2f", humidity);
+
+        char temperature_buf[32];
+        snprintf(temperature_buf, sizeof(temperature_buf), "%.2f", temperature);
+
+        char pressure_buf[32];
+        snprintf(pressure_buf, sizeof(pressure_buf), "%.2f", pressure);
+
+        char co2_buf[32];
+        snprintf(co2_buf, sizeof(co2_buf), "%.2f", co2);
+
+        create_layout(humidity_buf, temperature_buf, pressure_buf, co2_buf);
     }
 }
 
-void create_layout()
+void create_layout(const char* humidity, const char* temperature, const char* pressure, const char* co2)
 {
     create_label("humidity:", -30, -100);
-    create_label(humidity, 30, -100);
+    create_label(humidity, 50, -100);
     create_label("temperature:", -30, -80);
-    create_label(temperature, 30, -80);
+    create_label(temperature, 50, -80);
     create_label("co2:", -30, -60);
-    create_label(co2, 30, -60);
+    create_label(co2, 50, -60);
     create_label("pressure:", -30, -40);
-    create_label(pressure, 30, -40);
+    create_label(pressure, 50, -40);
 }
 
 
+//https://randomnerdtutorials.com/esp32-http-get-post-arduino/
 String make_call()
 {
     if (WiFi.status() == WL_CONNECTED)
@@ -158,12 +190,13 @@ String make_call()
             Serial.println(httpResponseCode);
             String payload = http.getString();
             Serial.println(payload);
+            http.end();
             return payload;
         }
         else
         {
-            Serial.print("Error code: ");
             Serial.println(httpResponseCode);
+            Serial.print("Error code: ");
         }
         // Free resources
         http.end();
@@ -171,6 +204,7 @@ String make_call()
     else
     {
         Serial.println("WiFi Disconnected");
+        connect_WiFi();
     }
 }
 
