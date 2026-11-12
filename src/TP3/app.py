@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, make_response, render_template
+from flask import Flask, make_response, render_template, jsonify
 from flaskext.mysql import MySQL
 
 app = Flask(__name__)
@@ -55,6 +55,17 @@ def current_room():
 
     return make_response(db_room(), 200, headers)
 
+@app.route("/api/all", methods=["GET"])
+def all_data():
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    if not db_data():
+        return make_response(503)
+
+    return make_response(db_data(), 200, headers)
+
 
 @app.route("/api/current", methods=["GET"])
 def current_data():
@@ -65,4 +76,6 @@ def current_data():
     if not db_data():
         return make_response(503)
 
-    return make_response(db_data(), 200, headers)
+
+    latest = list(db_data().values())[-1]
+    return make_response(jsonify(latest), 200, headers)
