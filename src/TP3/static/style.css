@@ -14,6 +14,8 @@ body {
     margin: 0;
 }
 
-.content {
-
+.dataBody {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
 }

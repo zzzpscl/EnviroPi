@@ -1,9 +1,10 @@
 # Source
 - https://flask.palletsprojects.com
 - https://hackersandslackers.com/flask-routes
-- https://favicon.io/
+- https://favicon.io
 - https://www.chartjs.org/docs/latest/getting-started
-- https://pypi.org/project/mysql-connector-python/
+- https://pypi.org/project/mysql-connector-python
+- https://stackoverflow.com
 
 # Getting started
 `pip install -r requirements.txt`
